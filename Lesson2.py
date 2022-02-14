@@ -21,12 +21,16 @@ pro = ts.pro_api(token)
 
 def get_data_bytushare(code,start_date,end_date):
     df = ts.pro_bar(ts_code=code, adj='qfq',start_date=start_date, end_date=end_date)
+    #df的数据类型是<class 'pandas.core.frame.DataFrame'>
+    #print(type(df))
+
     df = df[['trade_date', 'open', 'high', 'low', 'close','vol']]
     df.columns = ['trade_date', 'open', 'high', 'low', 'close','volume']
     df.trade_date = pd.to_datetime(df.trade_date)
     df.index = df.trade_date
-    df.sort_index(inplace=True)
-    df.fillna(0.0,inplace=True)
+    #pandas.core.frame.DataFrame 的方法如下：https://www.geeksforgeeks.org/python-pandas-dataframe/#:~:text=Pandas%20DataFrame%20is%20two-dimensional%20size-mutable%2C%20potentially%20heterogeneous%20tabular,three%20principal%20components%2C%20the%20data%2C%20rows%2C%20and%20columns.
+    df.sort_index(inplace=True) #用索引重新排序
+    df.fillna(0.0,inplace=True) #空的项目用0替代
 
     return df
 
@@ -36,6 +40,8 @@ data1 = get_data_bytushare('600276.SH','20200101','20211015')
 data2 = get_data_bytushare('600519.SH','20200101','20211015')
 # 海天味业
 data3 = get_data_bytushare('603288.SH','20200101','20211015')
+# 国泰君安
+data4 = get_data_bytushare('601211.SH','20200101','20211015')
 
 # %%
 
@@ -56,6 +62,11 @@ cerebro.adddata(datafeed2, name='600519.SH')
 # 添加 603288.SH 的行情数据
 datafeed3 = bt.feeds.PandasData(dataname=data3, fromdate=st_date, todate=ed_date)
 cerebro.adddata(datafeed3, name='603288.SH')
+
+#添加 601211.SH 的行情数据
+datafeed4 = bt.feeds.PandasData(dataname=data4, fromdate=st_date, todate=ed_date)
+cerebro.adddata(datafeed4, name='601211.SH')
+
 
 
 #%%
